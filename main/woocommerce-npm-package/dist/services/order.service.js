@@ -2,7 +2,6 @@ class OrderService {
   constructor(wc) {
     this.wc = wc;
   }
-
   async create(orderData) {
     try {
       const wooOrder = this.transformFromONDCFormat(orderData);
@@ -12,15 +11,15 @@ class OrderService {
       throw new Error(`Order creation failed: ${error.message}`);
     }
   }
-
   async update(orderId, status) {
     try {
-      return await this.wc.put(`orders/${orderId}`, { status });
+      return await this.wc.put(`orders/${orderId}`, {
+        status
+      });
     } catch (error) {
       throw new Error(`Order update failed: ${error.message}`);
     }
   }
-
   async getOrderDetails(orderId) {
     try {
       const response = await this.wc.get(`orders/${orderId}`);
@@ -29,7 +28,6 @@ class OrderService {
       throw new Error(`Failed to fetch order details: ${error.message}`);
     }
   }
-
   transformToONDCFormat(order) {
     return {
       id: order.id,
@@ -46,16 +44,6 @@ class OrderService {
       }
     };
   }
-
-  async getAll(params = {}) {
-    try {
-      const response = await this.wc.get('orders', params);
-      return response.data.map(order => this.transformToONDCFormat(order));
-    } catch (error) {
-      throw new Error(`Failed to fetch orders: ${error.message}`);
-    }
-  }
-
   transformFromONDCFormat(ondcOrder) {
     return {
       payment_method: ondcOrder.payment.type,
@@ -70,8 +58,6 @@ class OrderService {
     };
   }
 }
-
-
 module.exports = {
-  OrderService,
+  OrderService
 };

@@ -13,10 +13,5 @@ class PaymentService {
   }
   
   module.exports = {
-    WooCommerceONDCAdapter,
-    ProductService,
-    OrderService,
-    CatalogService,
-    LogisticsService,
     PaymentService
   };

@@ -2,7 +2,6 @@ class LogisticsService {
   constructor(wc) {
     this.wc = wc;
   }
-
   async updateShipment(orderId, trackingData) {
     try {
       return await this.wc.put(`orders/${orderId}`, {
@@ -16,7 +15,6 @@ class LogisticsService {
     }
   }
 }
-
 module.exports = {
-  LogisticsService,
+  LogisticsService
 };

@@ -1,0 +1,24 @@
+.response-panel {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.card {
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.navbar {
+    margin-bottom: 20px;
+}
+
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.input-group {
+    margin-bottom: 10px;
+}

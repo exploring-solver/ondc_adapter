@@ -2,7 +2,6 @@ class ProductService {
   constructor(wc) {
     this.wc = wc;
   }
-
   async search(params) {
     try {
       const response = await this.wc.get("products", params);
@@ -11,7 +10,6 @@ class ProductService {
       throw new Error(`Product search failed: ${error.message}`);
     }
   }
-
   async create(product) {
     try {
       const wooProduct = this.transformFromONDCFormat(product);
@@ -20,7 +18,6 @@ class ProductService {
       throw new Error(`Product creation failed: ${error.message}`);
     }
   }
-
   transformToONDCFormat(products) {
     return products.map(product => ({
       id: product.id,
@@ -39,7 +36,6 @@ class ProductService {
       }
     }));
   }
-
   transformFromONDCFormat(ondcProduct) {
     return {
       name: ondcProduct.descriptor.name,
