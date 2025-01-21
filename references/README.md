@@ -26,7 +26,7 @@ The details about the adapter's expected outcome and various approaches can be f
 
 - Now the expected outcome from us is a middleman sdk to dissolve the problem of payload translation
 
-- keeping in mind 
+- keeping in mind ondc compliance and registration of sellers selling on woocommerce, magento, shopify, etc. to easily manage their business with just adding their consumer key and secret and be a seller on the network.
 
 - To achieve that all these platforms are open source and offer an API key and functions for order management, buyer to seller app integration we have to use their api and sdk to create an ondc protocol specific sdk/adapter that can be easily integrated in current buyer-seller apps and in future ones too easily
 
