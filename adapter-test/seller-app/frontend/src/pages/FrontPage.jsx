@@ -25,7 +25,7 @@ const FrontPage = () => {
 
   const diagrams = [
     {
-      image: 'diagram.png',
+      image: 'diagram2.png',
       title: "System Architecture",
       description: "ONDC-WooCommerce Integration Architecture"
     },
