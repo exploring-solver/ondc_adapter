@@ -115,6 +115,7 @@ import SellerOrders from './pages/seller/Orders';
 import FrontPage from './pages/FrontPage';
 import theme from './theme';
 import Footer from './components/Footer'
+import Register from './pages/Register';
 
 function App() {
   return (
@@ -125,7 +126,7 @@ function App() {
           <Route path="/" element={<Navigate to="/home" replace />} />
           
           <Route path="/home" element={<FrontPage />} />
-
+          <Route path="/register" element={<Register />} />
           <Route path="/buyer" element={<BuyerLayout />}>
             <Route index element={<BuyerHome />} />
             <Route path="search" element={<BuyerSearch />} />
