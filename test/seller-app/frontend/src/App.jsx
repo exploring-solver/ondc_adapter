@@ -114,6 +114,7 @@ import SellerProducts from './pages/seller/Products';
 import SellerOrders from './pages/seller/Orders';
 import FrontPage from './pages/FrontPage';
 import theme from './theme';
+import Footer from './components/Footer'
 
 function App() {
   return (
@@ -140,6 +141,7 @@ function App() {
 
           <Route path="*" element={<ErrorBoundary />} />
         </Routes>
+        <Footer/>
       </Router>
     </ThemeProvider>
   );
