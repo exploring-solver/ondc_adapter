@@ -46,7 +46,7 @@ app.post('/ondc/callback/:action', async (req, res) => {
 // Product Management
 app.get('/products', async (req, res) => {
   try {
-    const products = await adapter.searchCatalog(req.query);
+    const products = await adapter.products.search(req.query);
     res.json(products);
   } catch (error) {
     res.status(500).json({ error: error.message });
