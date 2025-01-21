@@ -26,6 +26,8 @@ The details about the adapter's expected outcome and various approaches can be f
 
 - Now the expected outcome from us is a middleman sdk to dissolve the problem of payload translation
 
+- keeping in mind 
+
 - To achieve that all these platforms are open source and offer an API key and functions for order management, buyer to seller app integration we have to use their api and sdk to create an ondc protocol specific sdk/adapter that can be easily integrated in current buyer-seller apps and in future ones too easily
 
 - Probable things to make: python package, npm package and maybe a few more in other majorly used apps as , maybe for frontend too but our main target is to make this for backend.
