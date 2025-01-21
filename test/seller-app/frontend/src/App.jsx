@@ -97,17 +97,18 @@
 
 // export default App;
 
-import React from 'react';
 import { RouterProvider } from 'react-router-dom';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { router } from './router';
 import theme from './theme'; // We'll create this next
+import Footer from './components/Footer';
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <RouterProvider router={router} />
+      <Footer/>
     </ThemeProvider>
   );
 }
