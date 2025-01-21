@@ -9,11 +9,12 @@ import BuyerOrders from './pages/buyer/Orders';
 import SellerDashboard from './pages/seller/Dashboard';
 import SellerProducts from './pages/seller/Products';
 import SellerOrders from './pages/seller/Orders';
+import FrontPage from './pages/FrontPage';
 
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <Navigate to="/buyer" replace />,
+    element: <Navigate to="/home" replace />,
     errorElement: <ErrorBoundary />,
   },
   {
@@ -26,6 +27,10 @@ export const router = createBrowserRouter([
       { path: 'cart', element: <BuyerCart /> },
       { path: 'orders', element: <BuyerOrders /> },
     ],
+  },
+  {
+    path: '/home',
+    element: <FrontPage />,
   },
   {
     path: '/seller',

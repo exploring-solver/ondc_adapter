@@ -19,6 +19,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@noble/ed25519": "^2.2.3",
     "@woocommerce/woocommerce-rest-api": "^1.0.1",
     "axios": "^1.7.9",
     "crypto": "^1.0.1",
