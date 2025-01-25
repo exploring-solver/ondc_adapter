@@ -1,5 +1,5 @@
-import { Typography, Card, CardContent, Grid } from "@mui/material";
-import {  Search, ShoppingCart, Receipt } from "@mui/icons-material";
+import { Typography, Card, CardContent, Grid, Button, Box } from "@mui/material";
+import { Search, ShoppingCart, Receipt } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
 export default function BuyerHome() {
@@ -27,56 +27,95 @@ export default function BuyerHome() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4">
-      {/* Header */}
-      <Typography
-        variant="h4"
-        className="mb-8 text-center font-bold"
-        style={{
-          fontWeight: "bold",
-          color: "#333",
-          letterSpacing: "1px",
+    <div className="min-h-screen bg-gray-100">
+      {/* Hero Section */}
+      <Box
+        className="hero-section"
+        sx={{
+          py: 8,
+          textAlign: "center",
+          background: "linear-gradient(90deg, #6D83F2, #4EADF2)",
+          color: "white",
+          borderRadius: "0 0 50px 50px",
         }}
       >
-        Welcome to ONDC Marketplace
-      </Typography>
+        <Typography variant="h3" sx={{ fontWeight: "bold", mb: 2 }}>
+          Welcome to Woo-Chill Marketplace
+        </Typography>
+        <Typography variant="h6" sx={{ mb: 4 }}>
+          Your one-stop destination for all your shopping needs!
+        </Typography>
+        <Button
+          variant="contained"
+          size="large"
+          sx={{
+            background: "#FF9800",
+            color: "white",
+            "&:hover": { background: "#F57C00" },
+          }}
+        >
+          Explore Now
+        </Button>
+      </Box>
 
-      {/* Feature Cards */}
-      <Grid container spacing={4} justifyContent="center">
+      {/* Intro Section */}
+      <Box sx={{ py: 6, textAlign: "center" }}>
+        <Typography variant="h5" sx={{ fontWeight: "600", color: "#333", mb: 1 }}>
+          Discover, Shop, and Enjoy
+        </Typography>
+        <Typography variant="body1" sx={{ color: "#666", maxWidth: "700px", mx: "auto" }}>
+          ONDC Marketplace offers a wide range of products with seamless browsing, a user-friendly
+          interface, and secure transactions. Start your shopping journey today!
+        </Typography>
+      </Box>
+
+      {/* Features Section */}
+      <Grid container spacing={4} justifyContent="center" sx={{ px: 4, pb: 8 }}>
         {features.map((feature, index) => (
           <Grid item xs={12} sm={6} md={4} key={index}>
             <Card
-              className="cursor-pointer hover:shadow-2xl transition-transform transform hover:scale-105"
               onClick={() => navigate(feature.path)}
-              style={{
-                background: "linear-gradient(to bottom, #ffffff, #f7f7f7)",
-                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                borderRadius: "12px",
+              className="cursor-pointer hover:shadow-xl transition-transform transform hover:scale-105"
+              sx={{
+                background: "linear-gradient(145deg, #ffffff, #f9f9f9)",
+                borderRadius: "20px",
+                boxShadow: "0 6px 15px rgba(0, 0, 0, 0.1)",
+                textAlign: "center",
               }}
             >
-              <CardContent className="text-center">
-                <div
-                  className="mb-4 flex justify-center items-center"
-                  style={{
-                    backgroundColor: "#F5F5F5",
+              <CardContent>
+                <Box
+                  sx={{
+                    mb: 2,
+                    mx: "auto",
+                    width: 80,
+                    height: 80,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                     borderRadius: "50%",
-                    width: "70px",
-                    height: "70px",
-                    margin: "0 auto",
+                    background: "#f5f5f5",
                   }}
                 >
                   {feature.icon}
-                </div>
-                <Typography
-                  variant="h6"
-                  className="mb-2"
-                  style={{ fontWeight: "600", color: "#333" }}
-                >
+                </Box>
+                <Typography variant="h6" sx={{ fontWeight: "600", color: "#333", mb: 1 }}>
                   {feature.title}
                 </Typography>
-                <Typography color="textSecondary" style={{ fontSize: "0.9rem" }}>
+                <Typography variant="body2" sx={{ color: "#777", mb: 2 }}>
                   {feature.description}
                 </Typography>
+                <Button
+                  variant="contained"
+                  size="small"
+                  sx={{
+                    background: "#4CAF50",
+                    color: "white",
+                    "&:hover": { background: "#388E3C" },
+                  }}
+                >
+                  Learn More
+                </Button>
               </CardContent>
             </Card>
           </Grid>

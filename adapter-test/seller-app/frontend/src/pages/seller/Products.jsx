@@ -2,21 +2,18 @@ import { useState, useEffect } from 'react';
 import {
   Typography,
   Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
+  Card,
+  CardContent,
+  CardActions,
+  TextField,
+  IconButton,
+  Grid,
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
-  TextField,
-  IconButton
+  DialogActions
 } from '@mui/material';
-import { Edit, Delete } from '@mui/icons-material';
+import { Edit, Delete, Add } from '@mui/icons-material';
 import { apiService } from '../../services/api.service';
 
 export default function SellerProducts() {
@@ -70,11 +67,15 @@ export default function SellerProducts() {
   };
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <Typography variant="h4">Products</Typography>
-        <Button 
-          variant="contained" 
+    <div className="p-4 space-y-6">
+      {/* Header Section */}
+      <div className="flex justify-between items-center">
+        <Typography variant="h4" fontWeight={700}>
+          Products
+        </Typography>
+        <Button
+          variant="contained"
+          startIcon={<Add />}
           onClick={() => {
             setSelectedProduct(null);
             setFormData({
@@ -90,79 +91,102 @@ export default function SellerProducts() {
         </Button>
       </div>
 
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell align="right">Price</TableCell>
-              <TableCell align="right">Stock</TableCell>
-              <TableCell align="center">Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {products.map((product) => (
-              <TableRow key={product.id}>
-                <TableCell>{product.name}</TableCell>
-                <TableCell>{product.description}</TableCell>
-                <TableCell align="right">₹{product.price}</TableCell>
-                <TableCell align="right">{product.stock_quantity}</TableCell>
-                <TableCell align="center">
-                  <IconButton onClick={() => handleEdit(product)}>
-                    <Edit />
-                  </IconButton>
-                  <IconButton color="error">
-                    <Delete />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      {/* Products Grid */}
+      <Grid container spacing={3}>
+        {products.map((product) => (
+          <Grid item xs={12} sm={6} md={4} key={product.id}>
+            <Card
+              className="transition-transform transform hover:-translate-y-1 shadow-lg"
+              sx={{ borderRadius: 2 }}
+            >
+              <CardContent>
+                <Typography variant="h6" fontWeight={600} gutterBottom>
+                  {product.name}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {product.description}
+                </Typography>
+                <Typography
+                  variant="h6"
+                  color="primary"
+                  fontWeight={700}
+                  className="mt-4"
+                >
+                  ₹{product.price}
+                </Typography>
+                <Typography variant="body2" className="mt-2">
+                  Stock: {product.stock_quantity}
+                </Typography>
+              </CardContent>
+              <CardActions className="flex justify-end">
+                <IconButton
+                  color="primary"
+                  onClick={() => handleEdit(product)}
+                >
+                  <Edit />
+                </IconButton>
+                <IconButton color="error">
+                  <Delete />
+                </IconButton>
+              </CardActions>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
 
+      {/* Dialog for Adding/Editing Products */}
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-4 p-4">
           <DialogTitle>
             {selectedProduct ? 'Edit Product' : 'Add Product'}
           </DialogTitle>
-          <DialogContent>
+          <DialogContent className="space-y-4">
             <TextField
               fullWidth
               label="Name"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="mb-4 mt-4"
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+              required
             />
             <TextField
               fullWidth
               label="Description"
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               multiline
-              rows={4}
-              className="mb-4"
+              rows={3}
+              required
             />
             <TextField
               fullWidth
               label="Price"
               type="number"
               value={formData.price}
-              onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-              className="mb-4"
+              onChange={(e) =>
+                setFormData({ ...formData, price: e.target.value })
+              }
+              required
             />
             <TextField
               fullWidth
               label="Stock Quantity"
               type="number"
               value={formData.stock_quantity}
-              onChange={(e) => setFormData({ ...formData, stock_quantity: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, stock_quantity: e.target.value })
+              }
+              required
             />
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
-            <Button type="submit" variant="contained">Save</Button>
+            <Button type="submit" variant="contained">
+              Save
+            </Button>
           </DialogActions>
         </form>
       </Dialog>

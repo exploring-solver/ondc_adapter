@@ -1,5 +1,5 @@
-import React from 'react'
-
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 const CodeEditor = ({ code, language }) => (
     <div className="w-full rounded-lg bg-gray-900 shadow-lg">
       <div className="flex items-center px-4 py-2 border-b border-gray-800">

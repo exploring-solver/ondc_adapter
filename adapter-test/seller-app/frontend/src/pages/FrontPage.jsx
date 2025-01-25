@@ -1,4 +1,3 @@
-import React from 'react';
 import { Architecture, Security, Api, ShoppingCart } from '@mui/icons-material';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
@@ -379,19 +378,19 @@ module.exports = {
                 <ShoppingBag className="w-5 h-5 mr-2" />
                 Buyer Perspective
               </a>
-              <a target='_blank'
-                href="/register"
-                className="flex items-center px-4 py-2 rounded-md text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors"
-              >
-                <FormControl className="w-5 h-5 mr-2" />
-                Register
-              </a>
               <a
                 href="/seller" target='_blank'
                 className="flex items-center px-4 py-2 rounded-md text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors"
               >
                 <Store className="w-5 h-5 mr-2" />
                 Seller Perspective
+              </a>
+              <a target='_blank'
+                href="/register"
+                className="flex items-center px-4 py-2 rounded-md text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+              >
+                <FormControl className="w-5 h-5 mr-2" />
+                Register
               </a>
             </div>
           </div>
@@ -402,7 +401,7 @@ module.exports = {
         {/* Action Buttons */}
         <div className="flex justify-center space-x-6 my-8">
           <a
-            href="https://drive.google.com/your-video-link"
+            href="https://drive.google.com/drive/folders/1d5jPVZnj79-01zUEA3_9bUE21RtoamuO?usp=sharing"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors shadow-md"

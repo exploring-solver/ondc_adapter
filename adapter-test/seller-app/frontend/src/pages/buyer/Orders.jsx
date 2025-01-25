@@ -13,6 +13,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Typography
 } from '@mui/material';
 import { apiService } from '../../services/api.service';
 

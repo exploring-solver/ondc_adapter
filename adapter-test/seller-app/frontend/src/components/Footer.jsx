@@ -1,113 +1,150 @@
-import { WhatsApp, Phone, Store } from '@mui/icons-material';
-import { Button, Typography } from '@mui/material';
+import { WhatsApp, Email, GitHub } from '@mui/icons-material';
+import { Button, Typography, Box, Grid, useTheme,Container } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
+  const theme = useTheme();
   const categories = [
     'Fashion', 'Grocery', 'Electronics', 'F&B',
     'Home & Kitchen', 'Health & Wellness', 'BPC',
-    'Agriculture', 'Appliances', 'Auto1', 'Auto2',
+    'Agriculture', 'Appliances', 'Auto1'
   ];
 
   const services = [
     'About Us', 'Terms & Conditions', 'FAQ',
-    'Privacy Policy', 'E-waste Policy',
-    'Cancellation & Return Policy',
   ];
 
   return (
-    <footer className="bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 text-white py-10">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <Box
+      component="footer"
+      sx={{
+        bgcolor: 'background.paper',
+        borderTop: `1px solid ${theme.palette.divider}`,
+        py: 2,
+        mt: 'auto'
+      }}
+    >
+      <Container maxWidth="xl">
+        <Grid container spacing={4}>
           {/* Contact Section */}
-          <div>
-            <Typography variant="h5" className="mb-4 font-bold">
+          <Grid item xs={12} md={4}>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 700 }}>
               Woo-Chill
             </Typography>
-            <Typography variant="subtitle1" className="mb-6 text-gray-200">
+            <Typography variant="body2" color="text.secondary" paragraph>
               Open Network for Digital Commerce
             </Typography>
-            <div className="flex items-center space-x-3 mb-3">
-              <WhatsApp className="text-green-400" />
-              <Typography>+1 202-918-2132</Typography>
-            </div>
-            <div className="flex items-center space-x-3 mb-6">
-              <Phone className="text-yellow-400" />
-              <Typography>+1 202-918-2132</Typography>
-            </div>
-            <Typography variant="h6" className="mb-4 font-semibold">
-              Download App
-            </Typography>
-            <div className="flex space-x-4">
+            <Box sx={{ mb: 2 }}>
               <Button
-                variant="contained"
-                className="bg-black hover:bg-gray-800 text-white"
-                startIcon={<Store />}
+                startIcon={<WhatsApp sx={{ color: theme.palette.success.main }} />}
+                component="a"
+                sx={{
+                  textTransform: 'none',
+                  color: 'text.primary',
+                  '&:hover': { color: 'primary.main' }
+                }}
               >
-                App Store
+                +91 81682 78210
               </Button>
+            </Box>
+            <Box sx={{ mb: 3 }}>
               <Button
-                variant="contained"
-                className="bg-black hover:bg-gray-800 text-white"
-                startIcon={<Store />}
+                startIcon={<Email sx={{ color: theme.palette.warning.main }} />}
+                component="a"
+                sx={{
+                  textTransform: 'none',
+                  color: 'text.primary',
+                  '&:hover': { color: 'primary.main' }
+                }}
               >
-                Play Store
+                amansharma12607@gmail.com
               </Button>
-            </div>
-          </div>
+            </Box>
+            <Box sx={{ mb: 3 }}>
+              <Button
+                startIcon={<GitHub sx={{ color: theme.palette.warning.main }} />}
+                component="a"
+                href="https://github.com/exploring-solver/ondc_adapter"
+                sx={{
+                  textTransform: 'none',
+                  color: 'text.primary',
+                  '&:hover': { color: 'primary.main' }
+                }}
+              >
+                GitHub
+              </Button>
+            </Box>
+            
+          </Grid>
 
           {/* Categories Section */}
-          <div>
-            <Typography
-              variant="h6"
-              className="mb-4 text-center md:text-left font-bold underline"
-            >
-              Most Popular Categories
+          <Grid item xs={12} md={4}>
+            <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 600 }}>
+              Popular Categories
             </Typography>
-            <ul className="grid grid-cols-2 gap-2 text-center md:text-left text-gray-200">
+            <Grid container spacing={1}>
               {categories.map((category) => (
-                <li key={category}>
-                  <a
-                    href="#"
-                    className="hover:text-blue-100 transition-colors"
+                <Grid item xs={6} key={category}>
+                  <Button
+                    component={Link}
+                    to="#"
+                    fullWidth
+                    sx={{
+                      justifyContent: 'flex-start',
+                      color: 'text.secondary',
+                      '&:hover': { color: 'primary.main' }
+                    }}
                   >
                     {category}
-                  </a>
-                </li>
+                  </Button>
+                </Grid>
               ))}
-            </ul>
-          </div>
+            </Grid>
+          </Grid>
 
           {/* Services Section */}
-          <div>
-            <Typography
-              variant="h6"
-              className="mb-4 text-center md:text-left font-bold underline"
-            >
+          <Grid item xs={12} md={4}>
+            <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 600 }}>
               Customer Services
             </Typography>
-            <ul className="space-y-2 text-center md:text-left text-gray-200">
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
               {services.map((service) => (
-                <li key={service}>
-                  <a
-                    href="#"
-                    className="hover:text-blue-100 transition-colors"
-                  >
-                    {service}
-                  </a>
-                </li>
+                <Button
+                  key={service}
+                  component={Link}
+                  to="#"
+                  sx={{
+                    justifyContent: 'flex-start',
+                    color: 'text.secondary',
+                    '&:hover': { color: 'primary.main' }
+                  }}
+                >
+                  {service}
+                </Button>
               ))}
-            </ul>
-          </div>
-        </div>
+            </Box>
+          </Grid>
+        </Grid>
 
         {/* Copyright Section */}
-        <div className="mt-12 pt-6 border-t border-blue-300">
-          <Typography className="text-center text-sm text-gray-200">
-            © 2024 Woo-Chill. All rights reserved. Powered by WooCommerce & ONDC.
+        <Box
+          sx={{
+            mt: 4,
+            pt: 2,
+            borderTop: `1px solid ${theme.palette.divider}`,
+            textAlign: 'center'
+          }}
+        >
+          <Typography variant="body2" color="text.secondary">
+            © 2024 ONDC Woo-Commerce Portal. All rights reserved. 
+            <br />
+            Powered by WooCommerce & ONDC Network
+            <br />
+            Designed by Team Chill.
           </Typography>
-        </div>
-      </div>
-    </footer>
+        </Box>
+      </Container>
+    </Box>
   );
 };
 

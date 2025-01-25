@@ -4,7 +4,8 @@ import {
   Grid,
   Card,
   CardContent,
-  LinearProgress
+  LinearProgress,
+  Box,
 } from '@mui/material';
 import {
   TrendingUp,
@@ -14,7 +15,7 @@ import {
 } from '@mui/icons-material';
 import { apiService } from '../../services/api.service';
 
-export default function SellerDashboard() {
+export default function SellerHomePage() {
   const [stats, setStats] = useState({
     totalOrders: 0,
     pendingOrders: 0,
@@ -29,10 +30,9 @@ export default function SellerDashboard() {
 
   const fetchDashboardStats = async () => {
     try {
-      // In a real application, you would fetch these stats from your backend
       const orders = await apiService.getOrders();
       const products = await apiService.getProducts();
-      
+
       setStats({
         totalOrders: orders.data.length,
         pendingOrders: orders.data.filter(o => o.status === 'processing').length,
@@ -78,26 +78,128 @@ export default function SellerDashboard() {
   }
 
   return (
-    <div>
-      <Typography variant="h4" className="mb-6">Dashboard</Typography>
+    <Box sx={{ p: 3, bgcolor: '#f9fafb', minHeight: '100vh' }}>
+      <Typography
+        variant="h4"
+        sx={{
+          mb: 4,
+          pb: 1,
+          borderBottom: `3px solid `,
+          fontWeight: 'bold',
+          color: 'text.primary'
+        }}
+      >
+        Seller Dashboard
+      </Typography>
 
+      {/* Dashboard Stats */}
       <Grid container spacing={3}>
         {statsCards.map((stat, index) => (
           <Grid item xs={12} sm={6} md={3} key={index}>
-            <Card>
+            <Card
+              className="shadow-lg"
+              sx={{
+                borderRadius: 3,
+                transition: 'transform 0.3s',
+                '&:hover': { transform: 'translateY(-5px)', boxShadow: '0 8px 20px rgba(0,0,0,0.15)' }
+              }}
+            >
               <CardContent>
-                <div className="flex items-center justify-between mb-2">
-                  <div style={{ color: stat.color }}>{stat.icon}</div>
-                  <Typography variant="h4">{stat.value}</Typography>
-                </div>
-                <Typography color="textSecondary">{stat.title}</Typography>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
+                  }}
+                >
+                  <Box
+                    sx={{
+                      bgcolor: stat.color,
+                      p: 2,
+                      borderRadius: '50%',
+                      display: 'flex'
+                    }}
+                  >
+                    {stat.icon}
+                  </Box>
+                  <Box sx={{ textAlign: 'right' }}>
+                    <Typography variant="body2" color="text.secondary">
+                      {stat.title}
+                    </Typography>
+                    <Typography
+                      variant="h5"
+                      sx={{
+                        fontWeight: 700,
+                        color: stat.color
+                      }}
+                    >
+                      {stat.value}
+                    </Typography>
+                  </Box>
+                </Box>
               </CardContent>
             </Card>
           </Grid>
         ))}
       </Grid>
 
-      {/* Add more dashboard widgets here */}
-    </div>
+      {/* Quick Actions */}
+      <Box sx={{ mt: 5 }}>
+        <Typography variant="h6" sx={{ mb: 3, fontWeight: '600' }}>
+          Quick Actions
+        </Typography>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={6} md={4}>
+            <Card
+              sx={{
+                p: 3,
+                textAlign: 'center',
+                borderRadius: 2,
+                transition: 'transform 0.2s',
+                '&:hover': { transform: 'scale(1.03)', boxShadow: '0 6px 18px rgba(0,0,0,0.15)' }
+              }}
+              className="daisy-card bg-base-200"
+            >
+              <Typography variant="button">Add New Product</Typography>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <Card
+              sx={{
+                p: 3,
+                textAlign: 'center',
+                borderRadius: 2,
+                transition: 'transform 0.2s',
+                '&:hover': { transform: 'scale(1.03)', boxShadow: '0 6px 18px rgba(0,0,0,0.15)' }
+              }}
+              className="daisy-card bg-base-200"
+            >
+              <Typography variant="button">View Orders</Typography>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <Card
+              sx={{
+                p: 3,
+                textAlign: 'center',
+                borderRadius: 2,
+                transition: 'transform 0.2s',
+                '&:hover': { transform: 'scale(1.03)', boxShadow: '0 6px 18px rgba(0,0,0,0.15)' }
+              }}
+              className="daisy-card bg-base-200"
+            >
+              <Typography variant="button">Analytics</Typography>
+            </Card>
+          </Grid>
+        </Grid>
+      </Box>
+
+      {/* Placeholder for Upcoming Features */}
+      <Box sx={{ mt: 5, p: 4, bgcolor: '#fff', borderRadius: 2 }} className="shadow-md">
+        <Typography variant="body1" sx={{ fontWeight: 500, textAlign: 'center' }}>
+          Stay tuned for more updates and features coming soon!
+        </Typography>
+      </Box>
+    </Box>
   );
 }
