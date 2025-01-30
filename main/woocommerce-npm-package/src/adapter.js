@@ -95,6 +95,89 @@ class WooCommerceONDCAdapter {
     return await this.ondcProtocol.sendToNetwork('confirm', confirmPayload);
   }
 
+  async initOrder(orderDetails) {
+    if (!this.isBuyer) throw new Error('This method is only available for buyer apps');
+
+    const initPayload = {
+      order: {
+        provider: {
+          id: orderDetails.provider.id,
+          locations: orderDetails.provider.locations
+        },
+        items: orderDetails.items.map(item => ({
+          id: item.id,
+          fulfillment_id: item.fulfillment_id,
+          quantity: {
+            count: item.quantity
+          },
+          ...(item.parent_item_id && { parent_item_id: item.parent_item_id }),
+          ...(item.tags && { tags: item.tags })
+        })),
+        billing: {
+          name: orderDetails.billing.name,
+          address: orderDetails.billing.address,
+          tax_number: orderDetails.billing.tax_number,
+          email: orderDetails.billing.email,
+          phone: orderDetails.billing.phone
+        },
+        fulfillments: orderDetails.fulfillments
+      }
+    };
+
+    return await this.ondcProtocol.sendToNetwork('init', initPayload);
+  }
+
+  async handleInit(initRequest) {
+    if (this.isBuyer) throw new Error('This method is only available for seller apps');
+
+    // Create quote based on the init request
+    const quote = await this.orders.createQuote(initRequest.order);
+    
+    const response = {
+      order: {
+        provider: initRequest.order.provider,
+        items: initRequest.order.items,
+        billing: initRequest.order.billing,
+        fulfillments: initRequest.order.fulfillments,
+        quote: quote,
+        payment: {
+          "@ondc/org/buyer_app_finder_fee_type": "percent",
+          "@ondc/org/buyer_app_finder_fee_amount": "3"
+        },
+        cancellation_terms: [
+          {
+            fulfillment_state: {
+              descriptor: {
+                code: "Pending"
+              }
+            },
+            cancellation_fee: {
+              percentage: "0"
+            },
+            external_ref: {
+              url: "https://example.com/cancellation-policy"
+            }
+          },
+          {
+            fulfillment_state: {
+              descriptor: {
+                code: "Packed"
+              }
+            },
+            cancellation_fee: {
+              percentage: "20"
+            },
+            external_ref: {
+              url: "https://example.com/cancellation-policy"
+            }
+          }
+        ]
+      }
+    };
+
+    return response;
+  }
+
   // Seller App Methods
   async handleSearch(searchRequest) {
     if (this.isBuyer) throw new Error('This method is only available for seller apps');

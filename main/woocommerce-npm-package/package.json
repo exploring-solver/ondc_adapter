@@ -2,6 +2,7 @@
   "name": "woocommerce-ondc-adapter",
   "version": "1.0.0",
   "main": "index.js",
+  "module": "module",
   "scripts": {
     "test": "jest",
     "build": "babel src -d dist",
@@ -24,7 +25,8 @@
     "axios": "^1.7.9",
     "crypto": "^1.0.1",
     "dotenv": "^16.4.7",
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "ondc-crypto-sdk-nodejs": "^2.1.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.26.4",

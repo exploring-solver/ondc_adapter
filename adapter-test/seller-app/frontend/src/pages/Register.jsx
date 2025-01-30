@@ -29,6 +29,8 @@ const Register = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [sellerId, setSellerId] = useState('');
 
   const steps = ['Store Details', 'WooCommerce Credentials', 'Terms & Conditions'];
 
@@ -44,14 +46,36 @@ const Register = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setSuccess('');
 
     try {
-      // API call to register store would go here
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulated API call
-      console.log('Form submitted:', formData);
-      // Redirect to dashboard or show success message
+      const response = await fetch('http://localhost:3001/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          storeUrl: formData.storeUrl,
+          storeName: formData.storeName,
+          consumerKey: formData.consumerKey,
+          consumerSecret: formData.consumerSecret,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Registration failed');
+      }
+
+      setSellerId(data.sellerId);
+      setSuccess(`Successfully registered! Your Seller ID is: ${data.sellerId}`);
+      
+      // Store sellerId in localStorage for future use
+      localStorage.setItem('ondcSellerId', data.sellerId);
+      
     } catch (err) {
-      setError('Registration failed. Please try again.');
+      setError(err.message || 'Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -87,6 +111,7 @@ const Register = () => {
               onChange={handleInputChange}
               variant="outlined"
               required
+              placeholder="https://your-store.com"
             />
           </div>
         );
@@ -174,6 +199,12 @@ const Register = () => {
           {error && (
             <Alert severity="error" className="mb-4">
               {error}
+            </Alert>
+          )}
+
+          {success && (
+            <Alert severity="success" className="mb-4">
+              {success}
             </Alert>
           )}
 

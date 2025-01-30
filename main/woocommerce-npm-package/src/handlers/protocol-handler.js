@@ -1,7 +1,10 @@
 const crypto = require('crypto');
 const axios = require('axios');
-const { createHash } = require('crypto');
-const ed25519 = require('@noble/ed25519');
+const {
+  createAuthorizationHeader,
+  isHeaderValid,
+  createVLookupSignature
+} = require('ondc-crypto-sdk-nodejs');
 
 class ONDCProtocolHandler {
   constructor(config) {
@@ -9,48 +12,74 @@ class ONDCProtocolHandler {
     this.baseUrl = config.gatewayUrl || 'https://gateway.ondc.org';
     this.subscriberId = config.subscriberId;
     this.uniqueKeyId = config.uniqueKeyId;
-    this.signingPrivateKey = Buffer.from(config.signingPrivateKey, 'base64');
-  }
-
-  async createSigningString(requestBody, created, expires) {
-    // Generate BLAKE-512 digest of request body
-    const digest = await this.generateBlakeHash(JSON.stringify(requestBody));
-    
-    // Create signing string
-    return `(created): ${created}\n(expires): ${expires}\ndigest: BLAKE-512=${digest}`;
-  }
-
-  async generateBlakeHash(data) {
-    const hash = createHash('blake2b512');
-    hash.update(Buffer.from(data));
-    return hash.digest('base64');
+    this.signingPrivateKey = config.signingPrivateKey;
+    this.signingPublicKey = config.signingPublicKey;
+    this.domain = config.domain || 'ONDC:RET10';
+    this.city = config.city || 'std:080';
   }
 
   async createAuthHeader(requestBody) {
     try {
-      const created = Math.floor(Date.now() / 1000); // Current timestamp in seconds
-      const expires = created + 3600; // 1 hour expiry
-      
-      // Create signing string
-      const signingString = await this.createSigningString(requestBody, created, expires);
-      
-      // Sign the string using Ed25519
-      const signature = await ed25519.sign(
-        Buffer.from(signingString),
-        this.signingPrivateKey
-      );
+      const header = await createAuthorizationHeader({
+        body: requestBody,
+        privateKey: this.signingPrivateKey,
+        subscriberId: this.subscriberId,
+        subscriberUniqueKeyId: this.uniqueKeyId,
+      });
 
-      // Create authorization header
-      return {
-        Authorization: `Signature keyId="${this.subscriberId}|${this.uniqueKeyId}|ed25519",` +
-          `algorithm="ed25519",` +
-          `created="${created}",` +
-          `expires="${expires}",` +
-          `headers="(created) (expires) digest",` +
-          `signature="${signature.toString('base64')}"`
-      };
+      return { Authorization: header };
     } catch (error) {
       throw new Error(`Auth header creation failed: ${error.message}`);
+    }
+  }
+
+  async verifyGatewaySignature({ headers, data }) {
+    try {
+      const gatewayAuth = headers['x-gateway-authorization'];
+      if (!gatewayAuth) {
+        throw new Error('Missing gateway signature');
+      }
+
+      // Extract subscriber info from keyId
+      const matches = gatewayAuth.match(/keyId="([^"]+)"/);
+      if (!matches) {
+        throw new Error('Invalid gateway signature format');
+      }
+
+      const [subscriberId, uniqueKeyId] = matches[1].split('|');
+
+      // In production, you would fetch the public key from registry using subscriberId and uniqueKeyId
+      // For now, we'll verify using the provided public key
+      const isValid = await isHeaderValid({
+        header: gatewayAuth,
+        body: data,
+        publicKey: this.signingPublicKey // In production, use gateway's public key
+      });
+
+      if (!isValid) {
+        throw new Error('Invalid gateway signature');
+      }
+
+      return true;
+    } catch (error) {
+      throw new Error(`Gateway signature verification failed: ${error.message}`);
+    }
+  }
+
+  async createVLookupRequest() {
+    try {
+      const signature = await createVLookupSignature({
+        country: 'IND',
+        domain: this.domain,
+        type: 'sellerApp',
+        city: this.city,
+        subscriber_id: this.subscriberId,
+        privateKey: this.signingPrivateKey,
+      });
+
+      return signature;
+    } catch (error) {
+      throw new Error(`vLookup signature creation failed: ${error.message}`);
     }
   }
 
@@ -58,10 +87,10 @@ class ONDCProtocolHandler {
     try {
       // Create context for the request
       const context = {
-        domain: payload.domain || "ONDC:RET10",
+        domain: payload.domain || this.domain,
         action: action,
         country: "IND",
-        city: payload.city || "std:080",
+        city: payload.city || this.city,
         core_version: "1.2.0",
         bap_id: this.subscriberId,
         bap_uri: this.config.subscriberUrl,
@@ -76,7 +105,7 @@ class ONDCProtocolHandler {
         message: payload
       };
 
-      // Create authorization header
+      // Create authorization header using SDK
       const headers = await this.createAuthHeader(requestBody);
 
       // Send request to ONDC gateway
@@ -88,35 +117,16 @@ class ONDCProtocolHandler {
 
       // Verify gateway signature if present
       if (response.headers['x-gateway-authorization']) {
-        await this.verifyGatewaySignature(response);
+        await this.verifyGatewaySignature({
+          headers: response.headers,
+          data: response.data
+        });
       }
 
       return response.data;
 
     } catch (error) {
       throw new Error(`ONDC Network Error: ${error.message}`);
-    }
-  }
-
-  async verifyGatewaySignature(response) {
-    // Extract signature components from header
-    const gatewayAuth = response.headers['x-gateway-authorization'];
-    const matches = gatewayAuth.match(/keyId="([^"]+)"/);
-    if (!matches) {
-      throw new Error('Invalid gateway signature format');
-    }
-
-    const [subscriberId, uniqueKeyId] = matches[1].split('|');
-
-    // In production, you would:
-    // 1. Lookup gateway's public key from registry using subscriberId and uniqueKeyId
-    // 2. Verify the signature using the public key
-    // 3. Verify timestamp and expiry
-    // 4. Verify digest matches response body
-
-    // For now, we'll just validate the presence of the signature
-    if (!gatewayAuth.includes('signature=')) {
-      throw new Error('Missing gateway signature');
     }
   }
 
@@ -157,6 +167,25 @@ class ONDCProtocolHandler {
 
     return this.sendToNetwork('search', searchPayload);
   }
+
+  // Method to handle registry lookups
+  async lookupRegistry(subscriberId) {
+    try {
+      const signature = await this.createVLookupRequest();
+
+      const response = await axios.post(
+        `${this.config.registryUrl}/vlookup`,
+        {
+          subscriber_id: subscriberId,
+          signature: signature
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      throw new Error(`Registry lookup failed: ${error.message}`);
+    }
+  }
 }
 
 module.exports = ONDCProtocolHandler;
@@ -170,7 +199,7 @@ module.exports = ONDCProtocolHandler;
 //     this.config = config;
 //     // In real implementation, this would be the ONDC gateway URL
 //     // For testing, we can use a mock URL or local endpoint
-//     this.baseUrl = 'http://localhost:3001/mock-gateway'; 
+//     this.baseUrl = 'http://localhost:3001/mock-gateway';
 //   }
 
 //   async createAuthHeader() {

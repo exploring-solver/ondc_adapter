@@ -69,6 +69,88 @@ class OrderService {
       }))
     };
   }
+
+  async createQuote(orderDetails) {
+    try {
+      // Calculate item-level prices and taxes
+      const itemQuotes = await Promise.all(orderDetails.items.map(async (item) => {
+        const product = await this.wc.get(`products/${item.id}`);
+        const price = parseFloat(product.data.price);
+        const tax = await this.calculateTax(price, product.data.tax_class);
+        
+        return {
+          price: {
+            currency: "INR",
+            value: (price * item.quantity.count).toString()
+          },
+          tax: {
+            currency: "INR",
+            value: (tax * item.quantity.count).toString()
+          },
+          item: {
+            id: item.id,
+            quantity: item.quantity
+          }
+        };
+      }));
+
+      // Calculate delivery charges if applicable
+      const deliveryCharges = await this.calculateDeliveryCharges(orderDetails.fulfillments);
+
+      // Calculate total quote
+      const subtotal = itemQuotes.reduce((sum, quote) => 
+        sum + parseFloat(quote.price.value), 0);
+      const totalTax = itemQuotes.reduce((sum, quote) => 
+        sum + parseFloat(quote.tax.value), 0);
+      const total = subtotal + totalTax + deliveryCharges;
+
+      return {
+        price: {
+          currency: "INR",
+          value: subtotal.toString()
+        },
+        breakup: [
+          ...itemQuotes.map(quote => ({
+            "@ondc/org/item_id": quote.item.id,
+            "@ondc/org/item_quantity": quote.item.quantity,
+            title: "Item Price",
+            price: quote.price
+          })),
+          {
+            "@ondc/org/item_id": "delivery",
+            title: "Delivery Charges",
+            price: {
+              currency: "INR",
+              value: deliveryCharges.toString()
+            }
+          },
+          {
+            "@ondc/org/item_id": "tax",
+            title: "Tax",
+            price: {
+              currency: "INR",
+              value: totalTax.toString()
+            }
+          }
+        ],
+        ttl: "P1D"
+      };
+    } catch (error) {
+      throw new Error(`Quote creation failed: ${error.message}`);
+    }
+  }
+
+  async calculateTax(price, taxClass) {
+    // Implement tax calculation logic based on your requirements
+    // This is a simplified example
+    return price * 0.18; // 18% GST
+  }
+
+  async calculateDeliveryCharges(fulfillments) {
+    // Implement delivery charge calculation logic based on your requirements
+    // This is a simplified example
+    return 40; // Fixed delivery charge
+  }
 }
 
 
