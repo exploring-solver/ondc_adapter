@@ -44,7 +44,7 @@ const Footer = () => {
                   '&:hover': { color: 'primary.main' }
                 }}
               >
-                +91 81682 78210
+                +91 XXXXXXXXX
               </Button>
             </Box>
             <Box sx={{ mb: 3 }}>
